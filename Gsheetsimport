@@ -1,0 +1,31 @@
+#Paul M
+#Purpose: Get data from Google Sheets Document
+# 
+#  The following script will use the downloaded API key (client_secret.json)
+#more information https://developers.google.com/sheets/api/quickstart/python
+#used gspread Python library client from Google Sheets API
+#more information - https://gspread.readthedocs.io/en/latest/#
+
+
+import gspread, csv
+from oauth2client.service_account import ServiceAccountCredentials
+ 
+# Using the credentialss to create a client to interact with the Google Drive API V4
+# Please make sure that the google sheets workbook is shared to the email address in the APIkey .json file 
+
+scope = [ 'https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+credentials = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope) #client_secret.json will be your own downloaded api key
+client = gspread.authorize(credentials)
+
+
+#Locate the Workbook
+gsheet = client.open("PMGDOC").sheet1 #workbook name.shee1
+
+
+output = gsheet.get_all_values() #Returns a list of lists containing all cells’ values as strings.
+
+with open ('gsimport.csv', 'w') as csvfile:
+    w = csv.writer(csvfile, lineterminator=",\n")
+    for x in output:
+       w.writerows ([x])
+
